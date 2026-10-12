@@ -33,15 +33,15 @@ Single Next.js App Router app at repo root: `app/`, `components/`, `lib/`, `test
 
 **Purpose**: Project initialization and tooling.
 
-- [ ] T001 Initialize Next.js 16 (App Router) + TypeScript (strict) project with pnpm at repo root; create the `app/`, `components/`, `lib/`, `tests/`, `docs/` structure per plan.md
-- [ ] T002 [P] Add and configure Tailwind CSS in `app/globals.css` with design tokens for light/dark (`:root`, `prefers-color-scheme`, `[data-theme]`) and a `prefers-reduced-motion` base
-- [ ] T003 [P] Install and initialize shadcn/ui (Radix primitives) into `components/ui/`
-- [ ] T004 [P] Install core dependencies: `zod`, `ai`, `@ai-sdk/google`, `@dnd-kit/core`, `@dnd-kit/sortable`, `zustand` (pin exact versions; verify current at install — AI SDK + Gemini model id per research.md R3)
-- [ ] T005 [P] Configure ESLint + Prettier + strict `tsconfig.json`; add pnpm scripts: `dev`, `build`, `typecheck`, `lint`, `test`, `test:a11y`, `test:e2e`
-- [ ] T006 [P] Set up test tooling: Vitest + React Testing Library + `jest-axe`; Playwright with its axe integration; base configs + one smoke test in `tests/unit/smoke.test.ts`
-- [ ] T007 [P] Create `.env.example` with `GEMINI_MODEL` (default a current Gemini 3.x Flash id; NOTE Gemini 2.5 shuts down 2026-10-16) and `AI_REQUEST_TIMEOUT_MS=30000` — NO secrets
-- [ ] T008 [P] Add GitHub Actions CI in `.github/workflows/ci.yml`: `typecheck` + `lint` + `test` + `test:a11y` + `build` (constitution-required gates)
-- [ ] T009 [P] Write `docs/adr/ADR-0001..0004.md`: Next.js App Router; Vercel AI SDK provider-agnostic boundary (Gemini-first, model id as config); dnd-kit for accessible DnD; localStorage-behind-`TripRepository`
+- [x] T001 Initialize Next.js 16 (App Router) + TypeScript (strict) project with pnpm at repo root; create the `app/`, `components/`, `lib/`, `tests/`, `docs/` structure per plan.md
+- [x] T002 [P] Add and configure Tailwind CSS in `app/globals.css` with design tokens for light/dark (`:root`, `prefers-color-scheme`, `[data-theme]`) and a `prefers-reduced-motion` base
+- [x] T003 [P] Install and initialize shadcn/ui (Radix primitives) into `components/ui/`
+- [x] T004 [P] Install core dependencies: `zod`, `ai`, `@ai-sdk/google`, `@dnd-kit/core`, `@dnd-kit/sortable`, `zustand` (pin exact versions; verify current at install — AI SDK + Gemini model id per research.md R3)
+- [x] T005 [P] Configure ESLint + Prettier + strict `tsconfig.json`; add pnpm scripts: `dev`, `build`, `typecheck`, `lint`, `test`, `test:a11y`, `test:e2e`
+- [x] T006 [P] Set up test tooling: Vitest + React Testing Library + `jest-axe`; Playwright with its axe integration; base configs + one smoke test in `tests/unit/smoke.test.ts`
+- [x] T007 [P] Create `.env.example` with `GEMINI_MODEL` (default a current Gemini 3.x Flash id; NOTE Gemini 2.5 shuts down 2026-10-16) and `AI_REQUEST_TIMEOUT_MS=30000` — NO secrets
+- [x] T008 [P] Add GitHub Actions CI in `.github/workflows/ci.yml`: `typecheck` + `lint` + `test` + `test:a11y` + `build` (constitution-required gates)
+- [x] T009 [P] Write `docs/adr/ADR-0001..0004.md`: Next.js App Router; Vercel AI SDK provider-agnostic boundary (Gemini-first, model id as config); dnd-kit for accessible DnD; localStorage-behind-`TripRepository`
 
 ---
 
@@ -52,14 +52,14 @@ stories depend on.
 
 **⚠️ CRITICAL**: No user story work begins until this phase is complete.
 
-- [ ] T010 Define Zod domain schemas in `lib/domain/schema.ts`: `PlaceCategory` enum (`food|sightseeing|outdoors|culture|nightlife|shopping|transit|accommodation|other`), `DayPart` (`morning|afternoon|evening`), `Pace` (`relaxed|balanced|packed`); `Place` (name 1–120, description 0–600, category from set, dayPart, order ≥0, **nullable** `cost`/`coordinates`/`accessibility` per FR-025); `Day` (index ≥0, label, nullable date, places[]); `Trip` (**days length 1–7**, title 1–120, destination 1–120, source `ai|manual`, timestamps); `GenerationRequest` (days 1–7, interests ≤10 × ≤40 chars); `TravelerSettings`
-- [ ] T011 [P] Export inferred TypeScript types (`z.infer`) in `lib/domain/types.ts`
-- [ ] T012 [P] Define `TripRepository` interface in `lib/persistence/trip-repository.ts` (save, get, list, delete)
-- [ ] T013 Implement `LocalStorageTripRepository` in `lib/persistence/local-storage-repo.ts` with try/catch on every access and a "may not persist" warning when storage is unavailable; supports multiple trips (depends on T010–T012)
-- [ ] T014 Create the Zustand store in `lib/store/board-store.ts` holding current trip + trip list, with `loadTrip`/`setCurrentTrip` wired to the repository (depends on T012, T013)
-- [ ] T015 [P] Build the app shell: `app/layout.tsx` with semantic landmarks, a skip-link, theme tokens, and global focus-visible + reduced-motion styles
-- [ ] T016 [P] Implement `TravelerSettings` local accessor in `lib/persistence/settings.ts` for the BYOK key, model override, and reducedMotion flag (never sent anywhere but `/api/generate`)
-- [ ] T017 [P] Build the read-only board DISPLAY components in `components/board/` — `KanbanBoard.tsx`, `DayColumn.tsx`, `PlaceCard.tsx` — rendering from the store with semantic HTML and labelled regions (no interaction yet; shared by US1 view and US2 editing)
+- [x] T010 Define Zod domain schemas in `lib/domain/schema.ts`: `PlaceCategory` enum (`food|sightseeing|outdoors|culture|nightlife|shopping|transit|accommodation|other`), `DayPart` (`morning|afternoon|evening`), `Pace` (`relaxed|balanced|packed`); `Place` (name 1–120, description 0–600, category from set, dayPart, order ≥0, **nullable** `cost`/`coordinates`/`accessibility` per FR-025); `Day` (index ≥0, label, nullable date, places[]); `Trip` (**days length 1–7**, title 1–120, destination 1–120, source `ai|manual`, timestamps); `GenerationRequest` (days 1–7, interests ≤10 × ≤40 chars); `TravelerSettings`
+- [x] T011 [P] Export inferred TypeScript types (`z.infer`) in `lib/domain/types.ts`
+- [x] T012 [P] Define `TripRepository` interface in `lib/persistence/trip-repository.ts` (save, get, list, delete)
+- [x] T013 Implement `LocalStorageTripRepository` in `lib/persistence/local-storage-repo.ts` with try/catch on every access and a "may not persist" warning when storage is unavailable; supports multiple trips (depends on T010–T012)
+- [x] T014 Create the Zustand store in `lib/store/board-store.ts` holding current trip + trip list, with `loadTrip`/`setCurrentTrip` wired to the repository (depends on T012, T013)
+- [x] T015 [P] Build the app shell: `app/layout.tsx` with semantic landmarks, a skip-link, theme tokens, and global focus-visible + reduced-motion styles
+- [x] T016 [P] Implement `TravelerSettings` local accessor in `lib/persistence/settings.ts` for the BYOK key, model override, and reducedMotion flag (never sent anywhere but `/api/generate`)
+- [x] T017 [P] Build the read-only board DISPLAY components in `components/board/` — `KanbanBoard.tsx`, `DayColumn.tsx`, `PlaceCard.tsx` — rendering from the store with semantic HTML and labelled regions (no interaction yet; shared by US1 view and US2 editing)
 
 **Checkpoint**: Foundation ready — user stories can begin and are mutually independent.
 
@@ -75,22 +75,22 @@ categorized, described cards appears (rendered by the Foundational board display
 
 ### Tests for User Story 1 ⚠️ (write first, ensure they fail)
 
-- [ ] T018 [P] [US1] Unit test `GenerationRequest` validation (days 1–7, interests ≤10 × ≤40 chars, required destination) in `tests/unit/generation-request.test.ts`
-- [ ] T019 [P] [US1] Unit test AI validate+normalize: wrong day count forced to requested (pad/trim), unknown category → `other`, **cap at 6 items/day (overflow trimmed)**, ids + order assigned, nullable roadmap fields set `null` in `tests/unit/normalize.test.ts`
-- [ ] T020 [P] [US1] Integration test `POST /api/generate` with mocked AI: 200 success, 400 invalid_request, 401 missing_key, 422 unusable_output, timeout path — AND assert the API key is never logged and no trip is persisted server-side (FR-009, FR-022) — in `tests/integration/generate-route.test.ts`
-- [ ] T021 [P] [US1] E2E (stubbed AI): enter destination + days → board renders with cards in `tests/e2e/generate.spec.ts`
+- [x] T018 [P] [US1] Unit test `GenerationRequest` validation (days 1–7, interests ≤10 × ≤40 chars, required destination) in `tests/unit/generation-request.test.ts`
+- [x] T019 [P] [US1] Unit test AI validate+normalize: wrong day count forced to requested (pad/trim), unknown category → `other`, **cap at 6 items/day (overflow trimmed)**, ids + order assigned, nullable roadmap fields set `null` in `tests/unit/normalize.test.ts`
+- [x] T020 [P] [US1] Integration test `POST /api/generate` with mocked AI: 200 success, 400 invalid_request, 401 missing_key, 422 unusable_output, timeout path — AND assert the API key is never logged and no trip is persisted server-side (FR-009, FR-022) — in `tests/integration/generate-route.test.ts`
+- [x] T021 [P] [US1] E2E (stubbed AI): enter destination + days → board renders with cards in `tests/e2e/generate.spec.ts`
 
 ### Implementation for User Story 1
 
-- [ ] T022 [US1] Implement bounded prompt builder in `lib/ai/prompt.ts` (caps free-text; restates day count, max 6/day, category enum, day-parts)
-- [ ] T023 [US1] Implement Gemini adapter in `lib/ai/providers/google.ts` using `createGoogleGenerativeAI({ apiKey })` per-request; model from request/env default
-- [ ] T024 [US1] Implement `lib/ai/usage-log.ts` to log token/cost metadata — and NEVER log the API key
-- [ ] T025 [US1] Implement `lib/ai/index.ts` `generateItinerary()`: hard timeout via `AbortSignal`, `generateObject` with the Zod schema, then validate + normalize (depends on T010, T022–T024)
-- [ ] T026 [US1] Implement `app/api/generate/route.ts` (server-only): re-validate request (days 1–7, size caps), collapse duplicate in-flight requests, call `lib/ai`, map errors to the contract's status/codes, never log the key or persist trips (depends on T025)
-- [ ] T027 [P] [US1] Build the trip-creation form in `components/trip-form/` (inputs + client-side Zod validation + submit)
-- [ ] T028 [P] [US1] Build the settings UI in `components/settings/` (BYOK key entry, "no key configured" state per FR-010, optional model override) using `lib/persistence/settings.ts`
-- [ ] T029 [US1] Wire the generate flow: form submit → `fetch('/api/generate')` → `buildTrip` → `store.loadTrip` → the Foundational board renders; progress + non-technical error/degradation states (depends on T026, T027, T017, T014)
-- [ ] T030 [US1] Add routes `app/page.tsx` (entry) and `app/trips/[tripId]/page.tsx` (board view) (depends on T017, T029)
+- [x] T022 [US1] Implement bounded prompt builder in `lib/ai/prompt.ts` (caps free-text; restates day count, max 6/day, category enum, day-parts)
+- [x] T023 [US1] Implement Gemini adapter in `lib/ai/providers/google.ts` using `createGoogleGenerativeAI({ apiKey })` per-request; model from request/env default
+- [x] T024 [US1] Implement `lib/ai/usage-log.ts` to log token/cost metadata — and NEVER log the API key
+- [x] T025 [US1] Implement `lib/ai/index.ts` `generateItinerary()`: hard timeout via `AbortSignal`, `generateObject` with the Zod schema, then validate + normalize (depends on T010, T022–T024)
+- [x] T026 [US1] Implement `app/api/generate/route.ts` (server-only): re-validate request (days 1–7, size caps), collapse duplicate in-flight requests, call `lib/ai`, map errors to the contract's status/codes, never log the key or persist trips (depends on T025)
+- [x] T027 [P] [US1] Build the trip-creation form in `components/trip-form/` (inputs + client-side Zod validation + submit)
+- [x] T028 [P] [US1] Build the settings UI in `components/settings/` (BYOK key entry, "no key configured" state per FR-010, optional model override) using `lib/persistence/settings.ts`
+- [x] T029 [US1] Wire the generate flow: form submit → `fetch('/api/generate')` → `buildTrip` → `store.loadTrip` → the Foundational board renders; progress + non-technical error/degradation states (depends on T026, T027, T017, T014)
+- [x] T030 [US1] Add routes `app/page.tsx` (entry) and `app/trips/[tripId]/page.tsx` (board view) (depends on T017, T029)
 
 **Checkpoint**: US1 is independently demoable — generate and view a plan. (Persistence/editing come next.)
 
