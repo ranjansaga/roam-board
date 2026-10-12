@@ -8,6 +8,15 @@
 
 **Input**: User description: "A traveler describes a trip; Roam Board uses AI to generate a structured, multi-day itinerary they can arrange and refine on a visual Kanban board (one column per day, cards per place/activity). AI generates the first draft only; all edits are manual. Local-first, no accounts; trips persist on-device and can be exported/imported. Bring-your-own-key for AI; the app stays fully usable without AI. Fully accessible (WCAG 2.2 AA)."
 
+## Clarifications
+
+### Session 2026-10-12
+
+- Q: How should a trip be shared or moved between devices/people in v1? → A: File export/import **only** — no share link and no server-side storage. The export is a single self-contained, **versioned**, human-readable file (intended encoding: JSON) that captures the complete trip and re-imports faithfully.
+- Q: Should each card's category come from a fixed set or be free-form? → A: A **fixed set** — Food, Sightseeing, Outdoors, Culture, Nightlife, Shopping, Transit, Accommodation — plus **Other** as an escape hatch.
+- Q: What are the trip-length bounds for v1 generation? → A: **1–7 days**, with a soft cap of about **6** place/activity items per day.
+- Q: How should a card's timing be represented? → A: A structured **day-part** (Morning / Afternoon / Evening) plus an explicit **order index** within its day.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Generate a day-by-day plan from a short description (Priority: P1)
@@ -70,6 +79,7 @@ A traveler's trip persists on their own device between visits, and can be export
 - **Very long trips or very large generated plans**: trip length is bounded (see Assumptions) and the board stays usable and scrollable.
 - **Local storage unavailable, full, or cleared (e.g., private browsing)**: the traveler is warned that their trip may not persist; the in-session experience still works.
 - **Malformed, truncated, or incompatible import**: import is rejected with a clear message and the current trip is not corrupted.
+- **Import from a different schema version**: a file whose schema version is recognized is imported (migrated if needed); an unrecognized or newer version is rejected with a clear message rather than silently mis-importing.
 - **Ambiguous, nonsensical, or non-existent destination**: the system responds gracefully (asks for a clearer destination or produces a best-effort plan with a caveat) rather than failing silently.
 - **Reduced-motion preference set**: drag/reorder motion is minimized or removed while all interactions still work.
 - **Duplicate or rapid repeat generation requests**: repeat/identical in-flight requests are collapsed or prevented rather than multiplied.
@@ -83,13 +93,15 @@ A traveler's trip persists on their own device between visits, and can be export
 - **FR-001**: System MUST let a traveler request a multi-day itinerary by providing at minimum a destination and a trip length.
 - **FR-002**: System MUST accept optional preferences — interests/themes, pace, party composition, and stated accessibility needs — and reflect any provided preferences in the generated plan.
 - **FR-003**: System MUST apply sensible defaults for any optional preference not provided, and MUST NOT require them.
-- **FR-004**: System MUST produce a plan organized as one group per day for the requested number of days, where each day holds an ordered list of place/activity items.
-- **FR-005**: Each generated place/activity item MUST include a name, a short description, a category, and an approximate time-of-day or explicit ordering.
+- **FR-004**: System MUST produce a plan organized as one group per day for the requested number of days (bounded per FR-027), where each day holds an ordered list of place/activity items.
+- **FR-005**: Each generated place/activity item MUST include a name, a short description, a category drawn from the fixed category set (FR-028), and a timing expressed as a day-part (Morning / Afternoon / Evening) plus an explicit order index within its day.
 - **FR-006**: System MUST validate the structure of generated output before displaying it, and MUST normalize it to the requested number of days.
 - **FR-007**: System MUST show clear progress while a plan is being generated and MUST keep the interface responsive.
 - **FR-008**: System MUST require the traveler's own AI key to perform generation, and MUST let the traveler provide and update that key.
 - **FR-009**: System MUST NOT expose the traveler's AI key to any party other than the AI provider required to fulfill a generation request, and MUST NOT store it anywhere it could be read by other users.
 - **FR-010**: When no AI key is configured, System MUST clearly indicate that generation is unavailable and how to enable it, without blocking manual planning.
+- **FR-027**: System MUST bound trip length to between 1 and 7 days inclusive, and MUST apply a soft cap of approximately 6 place/activity items per day to generated plans to keep output and cost bounded.
+- **FR-028**: System MUST constrain each place/activity category to a fixed set — Food, Sightseeing, Outdoors, Culture, Nightlife, Shopping, Transit, Accommodation — plus an "Other" value for anything that does not fit, and MUST map any generated category outside this set to "Other".
 
 **Board & editing (P2)**
 
@@ -108,6 +120,7 @@ A traveler's trip persists on their own device between visits, and can be export
 - **FR-020**: Users MUST be able to export a trip and import it, reproducing the trip faithfully (all days, cards, ordering, and fields).
 - **FR-021**: System MUST reject malformed or incompatible imports with a clear message and MUST NOT corrupt existing trips.
 - **FR-022**: System MUST NOT store a traveler's trips on a server or collect personal data within this feature.
+- **FR-029**: A trip export MUST be a single self-contained, human-readable file that contains the complete trip and carries a schema version identifier, so that a file exported by an earlier version can be recognized and imported (or clearly rejected) by a later version. Sharing in this feature is satisfied solely by this file export/import; no share link and no server-side storage are provided.
 
 **Cross-cutting (constitution-derived)**
 
@@ -120,7 +133,7 @@ A traveler's trip persists on their own device between visits, and can be export
 
 - **Trip**: a single travel plan. Key attributes: title/destination, length (number of days or a date range), the ordered set of Days, the optional preferences captured at generation time, and created/updated timestamps. Owns its Days.
 - **Day**: one day within a Trip. Key attributes: a day index/label (and optional date) and an ordered list of Places/Activities. Belongs to a Trip.
-- **Place / Activity (card)**: a single thing to do or visit. Attributes used this feature: name, short description, category, approximate time-of-day or order index. Attributes present but unused this feature (nullable/optional): estimated cost, geographic coordinates, accessibility metadata. Belongs to a Day.
+- **Place / Activity (card)**: a single thing to do or visit. Attributes used this feature: name, short description, category (from the fixed set in FR-028), day-part (Morning / Afternoon / Evening), and order index within its day. Attributes present but unused this feature (nullable/optional): estimated cost, geographic coordinates, accessibility metadata. Belongs to a Day.
 - **Generation Request**: the transient set of traveler inputs used to produce a plan (destination, length, interests, pace, party composition, accessibility needs). Used to create a Trip; not itself persisted as a first-class record.
 - **Traveler Settings**: the traveler's own AI key and app-level preferences, held locally on their device.
 
@@ -140,9 +153,10 @@ A traveler's trip persists on their own device between visits, and can be export
 
 - Target users are independent travelers planning leisure trips who are comfortable obtaining and pasting their own AI provider key for v1 (bring-your-own-key).
 - "A trip" in v1 is a single-destination, multi-day plan; multi-city routing is out of scope.
-- Trip length is bounded to a reasonable range (assumed **1–14 days**) to keep generated output and cost under control; the exact cap is a tunable detail to confirm during clarify/planning.
+- Trip length is bounded to **1–7 days** with a soft cap of about 6 place/activity items per day (clarified) to keep generated output and cost under control.
 - Generation creates or populates a trip's board. Regenerating or AI-editing an existing plan is **out of scope** for this feature and reserved for a later feature.
-- Sharing in v1 is satisfied by **export/import of a trip as a portable artifact** (e.g., a file). A copyable share link is desirable but only in scope if it can work **without** server-side storage of trips; otherwise it is deferred. *(To confirm in clarify.)*
+- Sharing in v1 is satisfied solely by **file export/import** of a trip as a single self-contained, versioned, human-readable artifact (intended encoding: JSON). A copyable share link is explicitly deferred to a later feature (clarified).
+- The interface and generated content are **English-first**; no localization or multi-language support is in scope for this feature.
 - Persistence is per-device/per-browser; trips do not sync across devices except via explicit export/import. Clearing browser data or using private browsing may remove trips, and the traveler is warned of this.
 - The AI key and trips are held locally on the traveler's device; no server-side storage of user trips and no personal-data collection occur within this feature.
 - Weather, budget totals, map display, and accessibility-of-places filtering are out of scope here; only the data fields that later enable them are present (FR-025).
