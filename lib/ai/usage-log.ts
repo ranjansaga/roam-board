@@ -19,3 +19,29 @@ export function logUsage(usage: UsageInfo): void {
     }),
   );
 }
+
+/**
+ * Log a generation failure with enough provider detail to diagnose it (status, URL, response body)
+ * — WITHOUT the API key or prompt content (Constitution Principle IV observability).
+ */
+export function logError(e: unknown, model: string): void {
+  const err = e as {
+    name?: string;
+    message?: string;
+    statusCode?: number;
+    url?: string;
+    responseBody?: string;
+  };
+  console.error(
+    "[ai.error]",
+    JSON.stringify({
+      model,
+      name: err?.name ?? null,
+      message: err?.message ?? String(e),
+      statusCode: err?.statusCode ?? null,
+      url: err?.url ?? null,
+      responseBody: typeof err?.responseBody === "string" ? err.responseBody.slice(0, 800) : null,
+      at: new Date().toISOString(),
+    }),
+  );
+}
