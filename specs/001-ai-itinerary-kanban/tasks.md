@@ -14,7 +14,9 @@ risky seams (AI parsing/normalization, board-ops, export round-trip, critical fl
 accessibility check. Test tasks are first-class, not optional, for this feature.
 
 **Organization**: Tasks are grouped by user story (US1 P1, US2 P2, US3 P3) so each can be built,
-tested, and demoed independently. MVP = US1.
+tested, and demoed independently. MVP = US1. (Revised after `/speckit-analyze`: the read-only board
+display moved to Foundational so US2 is independent of US1; the ~6/day "soft cap" is now an enforced
+cap; an explicit no-server-persistence/no-key-log assertion was added.)
 
 ## Format: `[ID] [P?] [Story] Description`
 
@@ -45,7 +47,8 @@ Single Next.js App Router app at repo root: `app/`, `components/`, `lib/`, `test
 
 ## Phase 2: Foundational (Blocking Prerequisites)
 
-**Purpose**: Core domain, persistence, store, and app shell that ALL user stories depend on.
+**Purpose**: Core domain, persistence, store, app shell, AND the read-only board display that ALL user
+stories depend on.
 
 **⚠️ CRITICAL**: No user story work begins until this phase is complete.
 
@@ -56,8 +59,9 @@ Single Next.js App Router app at repo root: `app/`, `components/`, `lib/`, `test
 - [ ] T014 Create the Zustand store in `lib/store/board-store.ts` holding current trip + trip list, with `loadTrip`/`setCurrentTrip` wired to the repository (depends on T012, T013)
 - [ ] T015 [P] Build the app shell: `app/layout.tsx` with semantic landmarks, a skip-link, theme tokens, and global focus-visible + reduced-motion styles
 - [ ] T016 [P] Implement `TravelerSettings` local accessor in `lib/persistence/settings.ts` for the BYOK key, model override, and reducedMotion flag (never sent anywhere but `/api/generate`)
+- [ ] T017 [P] Build the read-only board DISPLAY components in `components/board/` — `KanbanBoard.tsx`, `DayColumn.tsx`, `PlaceCard.tsx` — rendering from the store with semantic HTML and labelled regions (no interaction yet; shared by US1 view and US2 editing)
 
-**Checkpoint**: Foundation ready — user stories can begin.
+**Checkpoint**: Foundation ready — user stories can begin and are mutually independent.
 
 ---
 
@@ -67,27 +71,26 @@ Single Next.js App Router app at repo root: `app/`, `components/`, `lib/`, `test
 multi-day board in one generation.
 
 **Independent Test**: With a (mocked in tests) key, submit "Lisbon / 4 days" → a 4-column board of
-categorized, described cards appears.
+categorized, described cards appears (rendered by the Foundational board display).
 
 ### Tests for User Story 1 ⚠️ (write first, ensure they fail)
 
-- [ ] T017 [P] [US1] Unit test `GenerationRequest` validation (days 1–7, interests ≤10 × ≤40 chars, required destination) in `tests/unit/generation-request.test.ts`
-- [ ] T018 [P] [US1] Unit test AI validate+normalize: wrong day count forced to requested (pad/trim), unknown category → `other`, ~6-items/day cap, ids + order assigned, nullable roadmap fields set `null` in `tests/unit/normalize.test.ts`
-- [ ] T019 [P] [US1] Integration test `POST /api/generate` with mocked AI: 200 success, 400 invalid_request, 401 missing_key, 422 unusable_output, timeout path in `tests/integration/generate-route.test.ts`
-- [ ] T020 [P] [US1] E2E (stubbed AI): enter destination + days → board renders with cards in `tests/e2e/generate.spec.ts`
+- [ ] T018 [P] [US1] Unit test `GenerationRequest` validation (days 1–7, interests ≤10 × ≤40 chars, required destination) in `tests/unit/generation-request.test.ts`
+- [ ] T019 [P] [US1] Unit test AI validate+normalize: wrong day count forced to requested (pad/trim), unknown category → `other`, **cap at 6 items/day (overflow trimmed)**, ids + order assigned, nullable roadmap fields set `null` in `tests/unit/normalize.test.ts`
+- [ ] T020 [P] [US1] Integration test `POST /api/generate` with mocked AI: 200 success, 400 invalid_request, 401 missing_key, 422 unusable_output, timeout path — AND assert the API key is never logged and no trip is persisted server-side (FR-009, FR-022) — in `tests/integration/generate-route.test.ts`
+- [ ] T021 [P] [US1] E2E (stubbed AI): enter destination + days → board renders with cards in `tests/e2e/generate.spec.ts`
 
 ### Implementation for User Story 1
 
-- [ ] T021 [US1] Implement bounded prompt builder in `lib/ai/prompt.ts` (caps free-text; restates day count, ≤6/day, category enum, day-parts)
-- [ ] T022 [US1] Implement Gemini adapter in `lib/ai/providers/google.ts` using `createGoogleGenerativeAI({ apiKey })` per-request; model from request/env default
-- [ ] T023 [US1] Implement `lib/ai/usage-log.ts` to log token/cost metadata — and NEVER log the API key
-- [ ] T024 [US1] Implement `lib/ai/index.ts` `generateItinerary()`: hard timeout via `AbortSignal`, `generateObject` with the Zod schema, then validate + normalize (depends on T010, T021–T023)
-- [ ] T025 [US1] Implement `app/api/generate/route.ts` (server-only): re-validate request (days 1–7, size caps), collapse duplicate in-flight requests, call `lib/ai`, map errors to the contract's status/codes (depends on T024)
-- [ ] T026 [P] [US1] Build the trip-creation form in `components/trip-form/` (inputs + client-side Zod validation + submit)
-- [ ] T027 [P] [US1] Build the settings UI in `components/settings/` (BYOK key entry, "no key configured" state per FR-010, optional model override) using `lib/persistence/settings.ts`
-- [ ] T028 [P] [US1] Build read-only board display `components/board/KanbanBoard.tsx`, `DayColumn.tsx`, `PlaceCard.tsx` (render from store; semantic HTML, labelled regions)
-- [ ] T029 [US1] Wire the generate flow: form submit → `fetch('/api/generate')` → `buildTrip` → `store.loadTrip` → board renders; progress + non-technical error/degradation states (depends on T025, T026, T028, T014)
-- [ ] T030 [US1] Add routes `app/page.tsx` (entry) and `app/trips/[tripId]/page.tsx` (board view) (depends on T028, T029)
+- [ ] T022 [US1] Implement bounded prompt builder in `lib/ai/prompt.ts` (caps free-text; restates day count, max 6/day, category enum, day-parts)
+- [ ] T023 [US1] Implement Gemini adapter in `lib/ai/providers/google.ts` using `createGoogleGenerativeAI({ apiKey })` per-request; model from request/env default
+- [ ] T024 [US1] Implement `lib/ai/usage-log.ts` to log token/cost metadata — and NEVER log the API key
+- [ ] T025 [US1] Implement `lib/ai/index.ts` `generateItinerary()`: hard timeout via `AbortSignal`, `generateObject` with the Zod schema, then validate + normalize (depends on T010, T022–T024)
+- [ ] T026 [US1] Implement `app/api/generate/route.ts` (server-only): re-validate request (days 1–7, size caps), collapse duplicate in-flight requests, call `lib/ai`, map errors to the contract's status/codes, never log the key or persist trips (depends on T025)
+- [ ] T027 [P] [US1] Build the trip-creation form in `components/trip-form/` (inputs + client-side Zod validation + submit)
+- [ ] T028 [P] [US1] Build the settings UI in `components/settings/` (BYOK key entry, "no key configured" state per FR-010, optional model override) using `lib/persistence/settings.ts`
+- [ ] T029 [US1] Wire the generate flow: form submit → `fetch('/api/generate')` → `buildTrip` → `store.loadTrip` → the Foundational board renders; progress + non-technical error/degradation states (depends on T026, T027, T017, T014)
+- [ ] T030 [US1] Add routes `app/page.tsx` (entry) and `app/trips/[tripId]/page.tsx` (board view) (depends on T017, T029)
 
 **Checkpoint**: US1 is independently demoable — generate and view a plan. (Persistence/editing come next.)
 
@@ -98,8 +101,8 @@ categorized, described cards appears.
 **Goal**: The traveler edits the board directly (add/edit/delete/reorder/move, add/remove days) via
 pointer AND keyboard — including building a trip with no AI key.
 
-**Independent Test**: From a generated or empty trip, add/edit/delete a card and move it across days
-using keyboard only; build a full trip with no key.
+**Independent Test**: From an empty or imported trip (no US1 needed), add/edit/delete a card and move
+it across days using keyboard only; build a full trip with no key.
 
 ### Tests for User Story 2 ⚠️
 
@@ -112,11 +115,11 @@ using keyboard only; build a full trip with no key.
 
 - [ ] T035 [US2] Implement pure board-ops in `lib/domain/board-ops.ts` (all mutations; re-normalize `order` per day and contiguous `Day.index`)
 - [ ] T036 [US2] Extend the store with mutation actions wrapping board-ops, persist-on-change via repository, and `updatedAt` bump (depends on T035, T014)
-- [ ] T037 [US2] Integrate dnd-kit in `components/board/`: `DndContext` + `SortableContext` + PointerSensor + KeyboardSensor + screen-reader announcements (depends on T028)
+- [ ] T037 [US2] Add interaction to the board with dnd-kit: `DndContext` + `SortableContext` + PointerSensor + KeyboardSensor + screen-reader announcements, layered onto the Foundational board display (depends on T017, T036)
 - [ ] T038 [US2] Make `PlaceCard` interactive (edit via dialog/inline, delete) and `DayColumn` add-card — all keyboard-accessible (depends on T037)
 - [ ] T039 [US2] Add non-DnD fallback move controls (move up/down, move-to-day) for full keyboard parity (depends on T038)
 - [ ] T040 [US2] Add/remove-day controls wired to board-ops (depends on T036)
-- [ ] T041 [US2] Add "new empty trip (no AI)" entry from the home page (depends on T014, T028)
+- [ ] T041 [US2] Add "new empty trip (no AI)" entry from the home page (depends on T014, T017)
 - [ ] T042 [US2] Honor `prefers-reduced-motion` / `settings.reducedMotion` in DnD animations (depends on T037)
 
 **Checkpoint**: US1 + US2 both work — generate OR build by hand, then edit fully by keyboard/pointer.
@@ -165,15 +168,15 @@ identical trip.
 ### Phase Dependencies
 
 - **Setup (Phase 1)**: no dependencies.
-- **Foundational (Phase 2)**: after Setup — BLOCKS all user stories.
-- **User Stories (Phases 3–5)**: each depends only on Foundational; then independent (can be parallel or sequential P1→P2→P3).
+- **Foundational (Phase 2)**: after Setup — BLOCKS all user stories. Now includes the read-only board display (T017).
+- **User Stories (Phases 3–5)**: each depends only on Foundational; then fully independent (parallel or sequential P1→P2→P3).
 - **Polish (Phase 6)**: after the stories you intend to ship.
 
 ### User Story Dependencies
 
-- **US1 (P1)**: after Foundational. No dependency on US2/US3. *(Reload persistence is US3; US1 alone is in-memory + render.)*
-- **US2 (P2)**: after Foundational. Extends US1's board with interaction but is independently testable (works on an empty trip too).
-- **US3 (P3)**: after Foundational. Persists/exports whatever trips exist; independently testable.
+- **US1 (P1)**: after Foundational. No dependency on US2/US3. Renders via the Foundational board (T017). *(Reload persistence is US3; US1 alone is in-memory + render.)*
+- **US2 (P2)**: after Foundational. Layers interaction onto the Foundational board (T017) — **independent of US1** (testable on an empty/imported trip).
+- **US3 (P3)**: after Foundational. Persists/exports whatever trips exist; independently testable. (Edit-persistence of manual changes also relies on US2's T036 — expected under P1→P2→P3 order.)
 
 ### Within Each User Story
 
@@ -182,8 +185,8 @@ identical trip.
 ### Parallel Opportunities
 
 - Setup: T002–T009 are all `[P]`.
-- Foundational: T011, T012, T015, T016 are `[P]` (T013→T014 are sequential on the domain/repo).
-- US1 tests T017–T020 `[P]`; US1 UI T026/T027/T028 `[P]`.
+- Foundational: T011, T012, T015, T016, T017 are `[P]` (T013→T014 are sequential on the domain/repo).
+- US1 tests T018–T021 `[P]`; US1 UI T027/T028 `[P]`.
 - US2 tests T031–T034 `[P]`. US3 tests T043–T046 `[P]`.
 - With a team: once Foundational is done, US1/US2/US3 can proceed in parallel.
 
@@ -198,10 +201,9 @@ Task: "Unit test AI validate+normalize in tests/unit/normalize.test.ts"
 Task: "Integration test POST /api/generate (mocked AI) in tests/integration/generate-route.test.ts"
 Task: "E2E generate → board renders in tests/e2e/generate.spec.ts"
 
-# Then UI components in parallel:
+# Then US1 UI in parallel (board display already exists from Foundational T017):
 Task: "Trip-creation form in components/trip-form/"
 Task: "Settings / BYOK key UI in components/settings/"
-Task: "Read-only board display in components/board/"
 ```
 
 ---

@@ -14,7 +14,7 @@
 
 - Q: How should a trip be shared or moved between devices/people in v1? → A: File export/import **only** — no share link and no server-side storage. The export is a single self-contained, **versioned**, human-readable file (intended encoding: JSON) that captures the complete trip and re-imports faithfully.
 - Q: Should each card's category come from a fixed set or be free-form? → A: A **fixed set** — Food, Sightseeing, Outdoors, Culture, Nightlife, Shopping, Transit, Accommodation — plus **Other** as an escape hatch.
-- Q: What are the trip-length bounds for v1 generation? → A: **1–7 days**, with a soft cap of about **6** place/activity items per day.
+- Q: What are the trip-length bounds for v1 generation? → A: **1–7 days**, and generated plans are capped at a maximum of **6** place/activity items per day (overflow trimmed).
 - Q: How should a card's timing be represented? → A: A structured **day-part** (Morning / Afternoon / Evening) plus an explicit **order index** within its day.
 
 ## User Scenarios & Testing *(mandatory)*
@@ -100,7 +100,7 @@ A traveler's trip persists on their own device between visits, and can be export
 - **FR-008**: System MUST require the traveler's own AI key to perform generation, and MUST let the traveler provide and update that key.
 - **FR-009**: System MUST NOT expose the traveler's AI key to any party other than the AI provider required to fulfill a generation request, and MUST NOT store it anywhere it could be read by other users.
 - **FR-010**: When no AI key is configured, System MUST clearly indicate that generation is unavailable and how to enable it, without blocking manual planning.
-- **FR-027**: System MUST bound trip length to between 1 and 7 days inclusive, and MUST apply a soft cap of approximately 6 place/activity items per day to generated plans to keep output and cost bounded.
+- **FR-027**: System MUST bound trip length to between 1 and 7 days inclusive, and MUST cap generated plans at a maximum of 6 place/activity items per day, trimming any overflow, to keep output and cost bounded.
 - **FR-028**: System MUST constrain each place/activity category to a fixed set — Food, Sightseeing, Outdoors, Culture, Nightlife, Shopping, Transit, Accommodation — plus an "Other" value for anything that does not fit, and MUST map any generated category outside this set to "Other".
 
 **Board & editing (P2)**
@@ -153,7 +153,7 @@ A traveler's trip persists on their own device between visits, and can be export
 
 - Target users are independent travelers planning leisure trips who are comfortable obtaining and pasting their own AI provider key for v1 (bring-your-own-key).
 - "A trip" in v1 is a single-destination, multi-day plan; multi-city routing is out of scope.
-- Trip length is bounded to **1–7 days** with a soft cap of about 6 place/activity items per day (clarified) to keep generated output and cost under control.
+- Trip length is bounded to **1–7 days**, and generated plans are capped at a maximum of 6 place/activity items per day (overflow trimmed), to keep generated output and cost under control (clarified).
 - Generation creates or populates a trip's board. Regenerating or AI-editing an existing plan is **out of scope** for this feature and reserved for a later feature.
 - Sharing in v1 is satisfied solely by **file export/import** of a trip as a single self-contained, versioned, human-readable artifact (intended encoding: JSON). A copyable share link is explicitly deferred to a later feature (clarified).
 - The interface and generated content are **English-first**; no localization or multi-language support is in scope for this feature.

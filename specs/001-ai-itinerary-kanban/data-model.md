@@ -105,7 +105,7 @@ GeneratedItinerary = {
 
 - Force the number of days to exactly the requested `days` (pad with empty days / drop extras).
 - Assign `order` per day from array position; assign `id`s; coerce unknown categories to `"other"`.
-- Enforce the ~6-items/day soft cap (trim overflow) to bound output (FR-027, Principle V).
+- Enforce the 6-items/day cap — trim any overflow beyond 6 — to bound output (FR-027, Principle V).
 - If output fails Zod validation, treat as a generation failure (clear error, app stays usable —
   FR-024, Principle IV); never render a partial/broken board (SC-007).
 
