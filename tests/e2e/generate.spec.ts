@@ -47,9 +47,9 @@ test("generating an itinerary renders a board", async ({ page }) => {
 
   await page.goto("/");
   await page.getByLabel(/destination/i).fill("Lisbon");
-  await page.getByLabel(/days/i).fill("2");
+  await page.getByLabel(/^days/i).fill("2");
   await page.getByRole("button", { name: /generate itinerary/i }).click();
 
-  await expect(page.getByText("Time Out Market")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Time Out Market" })).toBeVisible();
   await expect(page.getByRole("heading", { name: "Lisbon" })).toBeVisible();
 });

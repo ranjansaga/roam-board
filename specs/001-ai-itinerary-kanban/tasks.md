@@ -106,21 +106,21 @@ it across days using keyboard only; build a full trip with no key.
 
 ### Tests for User Story 2 ⚠️
 
-- [ ] T031 [P] [US2] Unit tests for pure board-ops (addPlace, editPlace, deletePlace, reorderWithinDay, moveAcrossDays, addDay, removeDay; order + day-index re-normalized) in `tests/unit/board-ops.test.ts`
-- [ ] T032 [P] [US2] E2E keyboard-only DnD: focus a card, pick up, move to another day, drop in `tests/e2e/keyboard-dnd.spec.ts`
-- [ ] T033 [P] [US2] A11y test: axe on the board (idle and mid-interaction) in `tests/a11y/board.a11y.test.ts`
-- [ ] T034 [P] [US2] E2E: build a complete trip manually with NO key configured in `tests/e2e/manual-no-key.spec.ts`
+- [x] T031 [P] [US2] Unit tests for pure board-ops (addPlace, editPlace, deletePlace, reorderWithinDay, moveAcrossDays, addDay, removeDay; order + day-index re-normalized) in `tests/unit/board-ops.test.ts`
+- [x] T032 [P] [US2] E2E keyboard-only DnD: focus a card, pick up, move to another day, drop in `tests/e2e/keyboard-dnd.spec.ts`
+- [x] T033 [P] [US2] A11y test: axe on the board (idle and mid-interaction) in `tests/a11y/board.a11y.test.ts`
+- [x] T034 [P] [US2] E2E: build a complete trip manually with NO key configured in `tests/e2e/manual-no-key.spec.ts`
 
 ### Implementation for User Story 2
 
-- [ ] T035 [US2] Implement pure board-ops in `lib/domain/board-ops.ts` (all mutations; re-normalize `order` per day and contiguous `Day.index`)
-- [ ] T036 [US2] Extend the store with mutation actions wrapping board-ops, persist-on-change via repository, and `updatedAt` bump (depends on T035, T014)
-- [ ] T037 [US2] Add interaction to the board with dnd-kit: `DndContext` + `SortableContext` + PointerSensor + KeyboardSensor + screen-reader announcements, layered onto the Foundational board display (depends on T017, T036)
-- [ ] T038 [US2] Make `PlaceCard` interactive (edit via dialog/inline, delete) and `DayColumn` add-card — all keyboard-accessible (depends on T037)
-- [ ] T039 [US2] Add non-DnD fallback move controls (move up/down, move-to-day) for full keyboard parity (depends on T038)
-- [ ] T040 [US2] Add/remove-day controls wired to board-ops (depends on T036)
-- [ ] T041 [US2] Add "new empty trip (no AI)" entry from the home page (depends on T014, T017)
-- [ ] T042 [US2] Honor `prefers-reduced-motion` / `settings.reducedMotion` in DnD animations (depends on T037)
+- [x] T035 [US2] Implement pure board-ops in `lib/domain/board-ops.ts` (all mutations; re-normalize `order` per day and contiguous `Day.index`)
+- [x] T036 [US2] Extend the store with mutation actions wrapping board-ops, persist-on-change via repository, and `updatedAt` bump (depends on T035, T014)
+- [x] T037 [US2] Add interaction to the board with dnd-kit: `DndContext` + `SortableContext` + PointerSensor + KeyboardSensor + screen-reader announcements, layered onto the Foundational board display (depends on T017, T036)
+- [x] T038 [US2] Make `PlaceCard` interactive (edit via dialog/inline, delete) and `DayColumn` add-card — all keyboard-accessible (depends on T037)
+- [x] T039 [US2] Add non-DnD fallback move controls (move up/down, move-to-day) for full keyboard parity (depends on T038)
+- [x] T040 [US2] Add/remove-day controls wired to board-ops (depends on T036)
+- [x] T041 [US2] Add "new empty trip (no AI)" entry from the home page (depends on T014, T017)
+- [x] T042 [US2] Honor `prefers-reduced-motion` / `settings.reducedMotion` in DnD animations (depends on T037)
 
 **Checkpoint**: US1 + US2 both work — generate OR build by hand, then edit fully by keyboard/pointer.
 
