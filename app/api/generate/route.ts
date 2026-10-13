@@ -36,7 +36,7 @@ export async function POST(req: Request) {
     return fail("missing_key", "Add your Gemini API key in Settings to generate a plan.", 401);
   }
 
-  const modelId = model ?? process.env.GEMINI_MODEL ?? "gemini-3.5-flash";
+  const modelId = model ?? process.env.GEMINI_MODEL ?? "gemini-2.0-flash";
   const timeoutMs = Number(process.env.AI_REQUEST_TIMEOUT_MS ?? 60000);
 
   // NOTE (Principle V): request size is already bounded (days 1-7, capped field lengths) and each
