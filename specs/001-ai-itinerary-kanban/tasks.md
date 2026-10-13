@@ -136,17 +136,17 @@ identical trip.
 
 ### Tests for User Story 3 ⚠️
 
-- [ ] T043 [P] [US3] Unit: export → import round-trip is faithful (days, cards, order, fields) in `tests/unit/export-roundtrip.test.ts`
-- [ ] T044 [P] [US3] Unit: import rejects malformed JSON and unknown/newer `schemaVersion` WITHOUT corrupting existing trips in `tests/unit/import-validation.test.ts`
-- [ ] T045 [P] [US3] E2E: create a trip, reload → present; create several → all listed/openable in `tests/e2e/persistence.spec.ts`
-- [ ] T046 [P] [US3] E2E: export a trip, import into a clean session → reproduced in `tests/e2e/export-import.spec.ts`
+- [x] T043 [P] [US3] Unit: export → import round-trip is faithful (days, cards, order, fields) in `tests/unit/export-roundtrip.test.ts`
+- [x] T044 [P] [US3] Unit: import rejects malformed JSON and unknown/newer `schemaVersion` WITHOUT corrupting existing trips in `tests/unit/import-validation.test.ts`
+- [x] T045 [P] [US3] E2E: create a trip, reload → present; create several → all listed/openable in `tests/e2e/persistence.spec.ts`
+- [x] T046 [P] [US3] E2E: export a trip, import into a clean session → reproduced in `tests/e2e/export-import.spec.ts`
 
 ### Implementation for User Story 3
 
-- [ ] T047 [US3] Implement `lib/export/trip-file.ts`: JSON backup with `schemaVersion: 1` + `exportedAt`; import parse → validate → migrate/reject per `contracts/trip-export.schema.md`; and `lib/export/trip-text.ts` `tripToText()` producing human-readable Markdown (FR-030) (depends on T010)
-- [ ] T048 [US3] Ensure persistence is wired end-to-end: generated AND manually edited trips save via repository and reload on revisit (depends on T013, T014, T036)
-- [ ] T049 [P] [US3] Build the trip list on the home page: view, open, delete multiple saved trips (depends on T014)
-- [ ] T050 [US3] Add UI controls: "Copy as text" (FR-030), "Back up / transfer" (download JSON), and "Import" (upload + validate with clear, non-corrupting error messages) (depends on T047, T049)
+- [x] T047 [US3] Implement `lib/export/trip-file.ts`: JSON backup with `schemaVersion: 1` + `exportedAt`; import parse → validate → migrate/reject per `contracts/trip-export.schema.md`; and `lib/export/trip-text.ts` `tripToText()` producing human-readable Markdown (FR-030) (depends on T010)
+- [x] T048 [US3] Ensure persistence is wired end-to-end: generated AND manually edited trips save via repository and reload on revisit (depends on T013, T014, T036)
+- [x] T049 [P] [US3] Build the trip list on the home page: view, open, delete multiple saved trips (depends on T014)
+- [x] T050 [US3] Add UI controls: "Copy as text" (FR-030), "Back up / transfer" (download JSON), and "Import" (upload + validate with clear, non-corrupting error messages) (depends on T047, T049)
 
 **Checkpoint**: All three stories independently functional.
 
