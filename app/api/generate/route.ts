@@ -5,6 +5,8 @@ import { generateItinerary } from "@/lib/ai";
 import { mapGenerationError } from "@/lib/ai/http-errors";
 
 export const runtime = "nodejs";
+// Allow a slow generation to finish in production too (Vercel caps function duration; default 10s).
+export const maxDuration = 60;
 
 const BodySchema = z.object({
   request: GenerationRequestSchema,
@@ -35,7 +37,7 @@ export async function POST(req: Request) {
   }
 
   const modelId = model ?? process.env.GEMINI_MODEL ?? "gemini-3.5-flash";
-  const timeoutMs = Number(process.env.AI_REQUEST_TIMEOUT_MS ?? 30000);
+  const timeoutMs = Number(process.env.AI_REQUEST_TIMEOUT_MS ?? 60000);
 
   // NOTE (Principle V): request size is already bounded (days 1-7, capped field lengths) and each
   // request makes at most one provider call. Collapsing duplicate *in-flight* requests is a

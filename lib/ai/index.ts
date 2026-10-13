@@ -28,6 +28,9 @@ export async function generateItinerary(
       model,
       prompt: buildItineraryPrompt(request),
       output: Output.object({ schema: GeneratedItinerarySchema }),
+      // Disable Gemini's "thinking" pass: an itinerary is not a reasoning task, and the default
+      // thinking budget on 3.x Flash adds 15-40s of latency (the root cause of timeouts).
+      providerOptions: { google: { thinkingConfig: { thinkingBudget: 0 } } },
       abortSignal: AbortSignal.timeout(timeoutMs),
     });
 
