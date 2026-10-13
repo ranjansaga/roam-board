@@ -4,6 +4,8 @@ import * as React from "react";
 import { useRouter } from "next/navigation";
 import { TripForm } from "@/components/trip-form/TripForm";
 import { ManualTripForm } from "@/components/trip-form/ManualTripForm";
+import { TripList } from "@/components/trip/TripList";
+import { ImportTrip } from "@/components/trip/ImportTrip";
 import { SettingsPanel } from "@/components/settings/SettingsPanel";
 import { useBoardStore } from "@/lib/store/board-store";
 import { buildTrip, emptyTrip } from "@/lib/domain/trip";
@@ -58,6 +60,7 @@ export default function HomePage() {
 
   return (
     <div className="mx-auto flex max-w-xl flex-col gap-6">
+      <TripList />
       <div>
         <h1 className="text-2xl font-semibold">Plan a trip</h1>
         <p className="mt-1 text-sm" style={{ color: "var(--muted-foreground)" }}>
@@ -72,6 +75,7 @@ export default function HomePage() {
       <TripForm onGenerate={handleGenerate} loading={loading} />
       <SettingsPanel />
       <ManualTripForm onCreate={handleManualCreate} />
+      <ImportTrip />
     </div>
   );
 }

@@ -4,6 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { KanbanBoard } from "@/components/board/KanbanBoard";
+import { ShareActions } from "@/components/trip/ShareActions";
 import { useBoardStore } from "@/lib/store/board-store";
 
 export default function TripPage() {
@@ -40,11 +41,14 @@ export default function TripPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <h1 className="text-xl font-semibold">{trip.title}</h1>
-        <Link href="/" className="text-sm underline">
-          New trip
-        </Link>
+        <div className="flex items-center gap-3">
+          <ShareActions trip={trip} />
+          <Link href="/" className="text-sm underline">
+            New trip
+          </Link>
+        </div>
       </div>
       <KanbanBoard trip={trip} />
     </div>
