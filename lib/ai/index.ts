@@ -28,6 +28,10 @@ export async function generateItinerary(
       model,
       prompt: buildItineraryPrompt(request),
       output: Output.object({ schema: GeneratedItinerarySchema }),
+      // Keep Gemini's "thinking" to the minimum valid level: an itinerary needs little reasoning,
+      // and the default level adds latency. "low" is accepted by 3.x Flash ("minimal" is rejected;
+      // "thinkingBudget: 0" is rejected too).
+      providerOptions: { google: { thinkingConfig: { thinkingLevel: "low" } } },
       abortSignal: AbortSignal.timeout(timeoutMs),
     });
 

@@ -55,7 +55,7 @@ export function SettingsPanel({ onSaved }: { onSaved?: () => void }) {
             id="model"
             value={form.model}
             onChange={(e) => setForm((f) => ({ ...f, model: e.target.value }))}
-            placeholder="gemini-2.0-flash"
+            placeholder="gemini-3.8-flash"
           />
         </div>
         <div className="flex items-center gap-3">
