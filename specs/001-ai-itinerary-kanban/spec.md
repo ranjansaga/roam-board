@@ -17,6 +17,10 @@
 - Q: What are the trip-length bounds for v1 generation? → A: **1–7 days**, and generated plans are capped at a maximum of **6** place/activity items per day (overflow trimmed).
 - Q: How should a card's timing be represented? → A: A structured **day-part** (Morning / Afternoon / Evening) plus an explicit **order index** within its day.
 
+### Session 2026-10-13
+
+- Q: Is JSON export user-friendly for sharing/reading a plan? → A: No — separate the two needs. Provide a human-readable **"Copy as text"** (Markdown-style plain text) for sharing/reading, and keep the **JSON file strictly for lossless backup/transfer + re-import**. The JSON file is presented in the UI as "Back up / transfer", not "Export".
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Generate a day-by-day plan from a short description (Priority: P1)
@@ -120,7 +124,8 @@ A traveler's trip persists on their own device between visits, and can be export
 - **FR-020**: Users MUST be able to export a trip and import it, reproducing the trip faithfully (all days, cards, ordering, and fields).
 - **FR-021**: System MUST reject malformed or incompatible imports with a clear message and MUST NOT corrupt existing trips.
 - **FR-022**: System MUST NOT store a traveler's trips on a server or collect personal data within this feature.
-- **FR-029**: A trip export MUST be a single self-contained, human-readable file that contains the complete trip and carries a schema version identifier, so that a file exported by an earlier version can be recognized and imported (or clearly rejected) by a later version. Sharing in this feature is satisfied solely by this file export/import; no share link and no server-side storage are provided.
+- **FR-029**: A trip backup MUST be a single self-contained file (JSON) that contains the complete trip and carries a schema version identifier, so that a file produced by an earlier version can be recognized and imported (or clearly rejected) by a later version. This file serves lossless backup/transfer and re-import; it is presented as "Back up / transfer", not as the way to share a readable plan. No share link and no server-side storage are provided.
+- **FR-030**: Users MUST be able to copy a trip as human-readable plain text (Markdown-style: the destination, then each day with its ordered activities showing name, category, and day-part) suitable for pasting into messages, email, or notes. This is the human-facing "share" path (distinct from the JSON backup in FR-029).
 
 **Cross-cutting (constitution-derived)**
 
@@ -155,7 +160,7 @@ A traveler's trip persists on their own device between visits, and can be export
 - "A trip" in v1 is a single-destination, multi-day plan; multi-city routing is out of scope.
 - Trip length is bounded to **1–7 days**, and generated plans are capped at a maximum of 6 place/activity items per day (overflow trimmed), to keep generated output and cost under control (clarified).
 - Generation creates or populates a trip's board. Regenerating or AI-editing an existing plan is **out of scope** for this feature and reserved for a later feature.
-- Sharing in v1 is satisfied solely by **file export/import** of a trip as a single self-contained, versioned, human-readable artifact (intended encoding: JSON). A copyable share link is explicitly deferred to a later feature (clarified).
+- Sharing/reading is served by **"Copy as text"** (human-readable Markdown-style plain text; FR-030). Portability (backup, move between devices, re-open) is served by a **versioned JSON backup file** (FR-029) that also feeds import. A copyable share link is explicitly deferred to a later feature (clarified 2026-10-13).
 - The interface and generated content are **English-first**; no localization or multi-language support is in scope for this feature.
 - Persistence is per-device/per-browser; trips do not sync across devices except via explicit export/import. Clearing browser data or using private browsing may remove trips, and the traveler is warned of this.
 - The AI key and trips are held locally on the traveler's device; no server-side storage of user trips and no personal-data collection occur within this feature.

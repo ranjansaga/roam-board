@@ -143,10 +143,10 @@ identical trip.
 
 ### Implementation for User Story 3
 
-- [ ] T047 [US3] Implement `lib/export/trip-file.ts`: export with `schemaVersion: 1` + `exportedAt`; import parse → validate → migrate/reject per `contracts/trip-export.schema.md` (depends on T010)
+- [ ] T047 [US3] Implement `lib/export/trip-file.ts`: JSON backup with `schemaVersion: 1` + `exportedAt`; import parse → validate → migrate/reject per `contracts/trip-export.schema.md`; and `lib/export/trip-text.ts` `tripToText()` producing human-readable Markdown (FR-030) (depends on T010)
 - [ ] T048 [US3] Ensure persistence is wired end-to-end: generated AND manually edited trips save via repository and reload on revisit (depends on T013, T014, T036)
 - [ ] T049 [P] [US3] Build the trip list on the home page: view, open, delete multiple saved trips (depends on T014)
-- [ ] T050 [US3] Add export/import UI controls (download file; upload + import with clear, non-corrupting error messages) (depends on T047, T049)
+- [ ] T050 [US3] Add UI controls: "Copy as text" (FR-030), "Back up / transfer" (download JSON), and "Import" (upload + validate with clear, non-corrupting error messages) (depends on T047, T049)
 
 **Checkpoint**: All three stories independently functional.
 
