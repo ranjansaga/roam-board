@@ -5,25 +5,24 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { KanbanBoard } from "@/components/board/KanbanBoard";
 import { useBoardStore } from "@/lib/store/board-store";
-import type { Trip } from "@/lib/domain/schema";
 
 export default function TripPage() {
   const params = useParams<{ tripId: string }>();
   const id = params.tripId;
+  const currentTrip = useBoardStore((s) => s.currentTrip);
   const openTrip = useBoardStore((s) => s.openTrip);
-  const [state, setState] = React.useState<{ trip: Trip | null; loaded: boolean }>({
-    trip: null,
-    loaded: false,
-  });
-  const { trip, loaded } = state;
+  const [status, setStatus] = React.useState<"loading" | "ready" | "missing">("loading");
 
   React.useEffect(() => {
-    // Hydration-safe: the persisted trip can only be read client-side after mount.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setState({ trip: openTrip(id), loaded: true });
+    const t = openTrip(id);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- reflect the post-mount load result
+    setStatus(t ? "ready" : "missing");
   }, [id, openTrip]);
 
-  if (!loaded) {
+  // Read the trip reactively from the store so edits (add/move/delete) re-render the board.
+  const trip = currentTrip && currentTrip.id === id ? currentTrip : null;
+
+  if (status === "loading") {
     return <p>Loading…</p>;
   }
 

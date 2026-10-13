@@ -3,9 +3,10 @@
 import * as React from "react";
 import { useRouter } from "next/navigation";
 import { TripForm } from "@/components/trip-form/TripForm";
+import { ManualTripForm } from "@/components/trip-form/ManualTripForm";
 import { SettingsPanel } from "@/components/settings/SettingsPanel";
 import { useBoardStore } from "@/lib/store/board-store";
-import { buildTrip } from "@/lib/domain/trip";
+import { buildTrip, emptyTrip } from "@/lib/domain/trip";
 import { readSettings } from "@/lib/persistence/settings";
 import type { Day, GenerationRequest } from "@/lib/domain/schema";
 
@@ -49,6 +50,12 @@ export default function HomePage() {
     }
   }
 
+  function handleManualCreate(destination: string, days: number) {
+    const trip = emptyTrip(destination, days);
+    saveTrip(trip);
+    router.push(`/trips/${trip.id}`);
+  }
+
   return (
     <div className="mx-auto flex max-w-xl flex-col gap-6">
       <div>
@@ -64,6 +71,7 @@ export default function HomePage() {
       ) : null}
       <TripForm onGenerate={handleGenerate} loading={loading} />
       <SettingsPanel />
+      <ManualTripForm onCreate={handleManualCreate} />
     </div>
   );
 }
