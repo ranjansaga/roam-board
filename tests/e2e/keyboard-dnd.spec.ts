@@ -3,8 +3,8 @@ import { test, expect } from "@playwright/test";
 // A valid, schema-shaped trip: Day 1 has "Alpha", Day 2 is empty.
 const TRIP = {
   id: "trip-kbd",
-  title: "Lisbon",
-  destination: "Lisbon",
+  title: "Bali",
+  destination: "Bali",
   source: "manual",
   preferences: null,
   createdAt: "2026-10-13T00:00:00.000Z",

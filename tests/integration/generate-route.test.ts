@@ -9,7 +9,7 @@ import { generateItinerary } from "@/lib/ai";
 const mockGen = vi.mocked(generateItinerary);
 
 const validRequest = {
-  destination: "Lisbon",
+  destination: "Bali",
   days: 2,
   interests: [],
   pace: "balanced",

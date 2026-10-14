@@ -70,7 +70,7 @@ stories depend on.
 **Goal**: A traveler with a Gemini key turns destination + length (+ optional prefs) into a rendered
 multi-day board in one generation.
 
-**Independent Test**: With a (mocked in tests) key, submit "Lisbon / 4 days" → a 4-column board of
+**Independent Test**: With a (mocked in tests) key, submit "Bali / 4 days" → a 4-column board of
 categorized, described cards appears (rendered by the Foundational board display).
 
 ### Tests for User Story 1 ⚠️ (write first, ensure they fail)

@@ -33,7 +33,7 @@ A traveler who has configured their own AI key enters where they are going, for 
 
 **Acceptance Scenarios**:
 
-1. **Given** a valid AI key is configured and no trip exists, **When** the traveler submits destination "Lisbon" and length "4 days", **Then** a 4-column board is produced with each day containing at least one ordered place/activity card showing a name, a short description, and a category.
+1. **Given** a valid AI key is configured and no trip exists, **When** the traveler submits destination "Bali" and length "4 days", **Then** a 4-column board is produced with each day containing at least one ordered place/activity card showing a name, a short description, and a category.
 2. **Given** the traveler adds interests ("food", "history") and pace ("relaxed"), **When** they generate, **Then** the produced plan reflects those preferences (e.g., fewer activities per day for a relaxed pace; cards skewed toward the chosen interests).
 3. **Given** only the minimum inputs (destination + length) are provided, **When** the traveler generates, **Then** a plan is still produced using sensible defaults for the unspecified preferences.
 4. **Given** generation is in progress, **When** the traveler waits, **Then** they see a clear progress indication and the interface remains responsive (not frozen or broken).

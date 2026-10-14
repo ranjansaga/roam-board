@@ -17,10 +17,10 @@ faithfully.
   "exportedAt": "2026-10-12T10:00:00Z",
   "app": "roam-board",                // provenance marker
   "trip": {
-    "id": "…", "title": "Lisbon long weekend", "destination": "Lisbon",
+    "id": "…", "title": "Bali long weekend", "destination": "Bali",
     "source": "ai",
     "createdAt": "…", "updatedAt": "…",
-    "preferences": { "destination":"Lisbon", "days":4, "interests":["food"], "pace":"relaxed" },
+    "preferences": { "destination":"Bali", "days":4, "interests":["food"], "pace":"relaxed" },
     "days": [
       { "id":"…", "index":0, "label":"Day 1", "date":null,
         "places": [

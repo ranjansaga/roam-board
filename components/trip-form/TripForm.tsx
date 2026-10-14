@@ -54,7 +54,7 @@ export function TripForm({ onGenerate, loading = false }: Props) {
           id="destination"
           value={destination}
           onChange={(e) => setDestination(e.target.value)}
-          placeholder="e.g. Lisbon"
+          placeholder="e.g. Bali"
           required
         />
       </div>

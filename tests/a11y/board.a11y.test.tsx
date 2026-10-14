@@ -7,7 +7,7 @@ import { addPlace } from "@/lib/domain/board-ops";
 
 describe("KanbanBoard accessibility", () => {
   it("has no axe violations with content", async () => {
-    let trip = emptyTrip("Lisbon", 2);
+    let trip = emptyTrip("Bali", 2);
     trip = addPlace(trip, trip.days[0].id, {
       name: "Time Out Market",
       description: "A famous food hall.",

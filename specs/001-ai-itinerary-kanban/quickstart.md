@@ -45,7 +45,7 @@ pnpm build          # production build
 
 | # | Steps | Expected | Covers |
 |---|------|---------|--------|
-| 1 | Add a valid Gemini key in Settings; enter destination "Lisbon" + 4 days; generate | A 4-column board appears; every card has name + description + category | US1 AS1, SC-002 |
+| 1 | Add a valid Gemini key in Settings; enter destination "Bali" + 4 days; generate | A 4-column board appears; every card has name + description + category | US1 AS1, SC-002 |
 | 2 | Generate with interests food/history + relaxed pace | Plan reflects interests; fewer items/day for relaxed | US1 AS2 |
 | 3 | Generate with destination + length only | Plan still produced with defaults | US1 AS3 |
 | 4 | During generation | Clear progress; UI responsive | US1 AS4, SC-001 |

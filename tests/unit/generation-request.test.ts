@@ -3,7 +3,7 @@ import { GenerationRequestSchema } from "@/lib/domain/schema";
 
 describe("GenerationRequestSchema", () => {
   it("accepts minimal input and applies defaults", () => {
-    const r = GenerationRequestSchema.parse({ destination: "Lisbon", days: 4 });
+    const r = GenerationRequestSchema.parse({ destination: "Bali", days: 4 });
     expect(r.pace).toBe("balanced");
     expect(r.interests).toEqual([]);
     expect(r.party).toBe("");
@@ -11,7 +11,7 @@ describe("GenerationRequestSchema", () => {
 
   it("reflects provided preferences", () => {
     const r = GenerationRequestSchema.parse({
-      destination: "Lisbon",
+      destination: "Bali",
       days: 3,
       interests: ["food", "history"],
       pace: "relaxed",

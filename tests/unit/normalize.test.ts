@@ -3,7 +3,7 @@ import { normalizeItinerary } from "@/lib/ai/normalize";
 import type { GenerationRequest } from "@/lib/domain/schema";
 
 function req(days: number): GenerationRequest {
-  return { destination: "Lisbon", days, interests: [], pace: "balanced", party: "", accessibilityNeeds: "" };
+  return { destination: "Bali", days, interests: [], pace: "balanced", party: "", accessibilityNeeds: "" };
 }
 
 function place(name: string, category = "food", dayPart = "morning") {

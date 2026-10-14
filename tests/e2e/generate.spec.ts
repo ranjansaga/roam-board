@@ -12,7 +12,7 @@ const stubItinerary = {
           {
             id: "p1",
             name: "Time Out Market",
-            description: "A famous Lisbon food hall.",
+            description: "A famous Bali food hall.",
             category: "food",
             dayPart: "afternoon",
             order: 0,
@@ -46,10 +46,10 @@ test("generating an itinerary renders a board", async ({ page }) => {
   });
 
   await page.goto("/");
-  await page.getByLabel(/destination/i).fill("Lisbon");
+  await page.getByLabel(/destination/i).fill("Bali");
   await page.getByLabel(/^days/i).fill("2");
   await page.getByRole("button", { name: /generate itinerary/i }).click();
 
   await expect(page.getByRole("heading", { name: "Time Out Market" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Lisbon" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Bali" })).toBeVisible();
 });

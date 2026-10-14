@@ -5,7 +5,7 @@ import { addPlace } from "@/lib/domain/board-ops";
 
 describe("export → import round-trip", () => {
   it("reproduces days, cards, order, and fields faithfully", () => {
-    let trip = emptyTrip("Lisbon", 2);
+    let trip = emptyTrip("Bali", 2);
     trip = addPlace(trip, trip.days[0].id, {
       name: "Time Out Market",
       description: "Food hall",
@@ -18,7 +18,7 @@ describe("export → import round-trip", () => {
     if (!result.ok) return;
 
     const back = result.trip;
-    expect(back.title).toBe("Lisbon");
+    expect(back.title).toBe("Bali");
     expect(back.days).toHaveLength(2);
     expect(back.days[0].places[0].name).toBe("Time Out Market");
     expect(back.days[0].places[0].category).toBe("food");

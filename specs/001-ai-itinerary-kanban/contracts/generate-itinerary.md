@@ -13,7 +13,7 @@ directly. It accepts a bounded generation request plus the traveler's BYOK key, 
 ```jsonc
 {
   "request": {
-    "destination": "Lisbon",     // required, 1–120 chars
+    "destination": "Bali",     // required, 1–120 chars
     "days": 4,                    // required, integer 1–7  (FR-027)
     "interests": ["food","history"], // optional, 0–10 items, each ≤ 40 chars
     "pace": "relaxed",            // optional: relaxed|balanced|packed (default balanced)
