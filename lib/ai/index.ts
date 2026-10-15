@@ -1,13 +1,30 @@
 import { generateText, Output } from "ai";
-import { GeneratedItinerarySchema, type Day, type GenerationRequest } from "@/lib/domain/schema";
+import {
+  GeneratedItinerarySchema,
+  type Day,
+  type GenerationRequest,
+  type Trip,
+} from "@/lib/domain/schema";
+import { mergePreserveManualCoords } from "@/lib/domain/coord-merge";
 import { getGoogleModel } from "./providers/google";
 import { buildItineraryPrompt } from "./prompt";
 import { normalizeItinerary } from "./normalize";
-import { logError, logUsage, type UsageInfo } from "./usage-log";
+import { logCoordEnrichment, logError, logUsage, type UsageInfo } from "./usage-log";
 
 export interface GenerateResult {
   days: Day[];
   usage: UsageInfo;
+}
+
+export interface GenerateOptions {
+  /**
+   * When present, the fresh trip is passed through
+   * {@link mergePreserveManualCoords} so any place whose name survives
+   * regeneration keeps its manually-set coordinates (Feature 002 FR-006a).
+   * No in-app regenerate flow calls this yet; the hook is here for the
+   * future regenerate feature.
+   */
+  prevTrip?: Trip;
 }
 
 /**
@@ -21,6 +38,7 @@ export async function generateItinerary(
   apiKey: string,
   modelId: string,
   timeoutMs: number,
+  options: GenerateOptions = {},
 ): Promise<GenerateResult> {
   const model = getGoogleModel(apiKey, modelId);
   try {
@@ -41,7 +59,23 @@ export async function generateItinerary(
       throw e;
     }
 
-    const days = normalizeItinerary(output, request);
+    const normalized = normalizeItinerary(output, request);
+    let days = normalized.days;
+    if (options.prevTrip) {
+      // Build an ephemeral Trip-shaped snapshot of `days` so we can reuse the
+      // name-based merge helper. Only the days list matters to the merge.
+      const merged = mergePreserveManualCoords(options.prevTrip, {
+        ...options.prevTrip,
+        days,
+      });
+      days = merged.days;
+    }
+    logCoordEnrichment({
+      destination: request.destination,
+      placesTotal: normalized.placesTotal,
+      placesWithCoords: normalized.placesWithCoords,
+      placesInvalidCoords: normalized.placesInvalidCoords,
+    });
     const tokens = usage as { inputTokens?: number; outputTokens?: number } | undefined;
     const info: UsageInfo = {
       inputTokens: tokens?.inputTokens,

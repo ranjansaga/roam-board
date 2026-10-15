@@ -13,6 +13,7 @@ export function buildItineraryPrompt(req: GenerationRequest): string {
     `You are an expert travel planner. Create a ${req.days}-day itinerary for ${req.destination}.`,
     `Return exactly ${req.days} day(s). Each day has at most ${MAX_ITEMS_PER_DAY} activities.`,
     `Each activity must have: a name; a 1-2 sentence description; a category chosen from EXACTLY this set [${PLACE_CATEGORIES.join(", ")}]; and a dayPart that is one of morning, afternoon, or evening.`,
+    `For each activity, include lat and lng as decimal degrees (WGS84) when you are confident of its location. Omit both fields if you are not confident. Do not guess.`,
     `Traveler interests: ${interests}. Pace: ${req.pace} (${PACE_HINT[req.pace]}).`,
     req.party ? `Party: ${req.party}.` : "",
     req.accessibilityNeeds ? `Accessibility needs to consider: ${req.accessibilityNeeds}.` : "",
