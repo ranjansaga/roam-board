@@ -29,9 +29,9 @@ Single Next.js App Router project. New code lives under `app/trips/[tripId]/map/
 
 **Purpose**: Add the two new runtime dependencies and the two ADR stubs so later tasks can reference them.
 
-- [ ] T001 Add `leaflet@1.9.4`, `react-leaflet@5.x` (React 19-compatible) to `dependencies` and `@types/leaflet` to `devDependencies` in `package.json`; run `pnpm install`; commit the updated `pnpm-lock.yaml`.
-- [ ] T002 [P] Create ADR stub `docs/adr/ADR-0005-react-leaflet-map-library.md` with Context/Decision/Consequences headings (final text comes in T034) and a link back to `specs/002-trip-map-view/research.md#r1-map-library`.
-- [ ] T003 [P] Create ADR stub `docs/adr/ADR-0006-carto-basemaps-tiles.md` with Context/Decision/Consequences headings and a link to `specs/002-trip-map-view/research.md#r2-tile-source`.
+- [X] T001 Add `leaflet@1.9.4`, `react-leaflet@5.x` (React 19-compatible) to `dependencies` and `@types/leaflet` to `devDependencies` in `package.json`; run `pnpm install`; commit the updated `pnpm-lock.yaml`.
+- [X] T002 [P] Create `docs/adr/ADR-0005-react-leaflet-map-library.md` with full Context/Decision/Consequences prose (addresses analyze L1 — body landed on day 1, not deferred to T034).
+- [X] T003 [P] Create `docs/adr/ADR-0006-carto-basemaps-tiles.md` with full Context/Decision/Consequences prose (addresses analyze L1).
 
 ---
 
