@@ -71,6 +71,25 @@ body {
   }
 }
 
+/* ---- Feature 002: Trip Map pin icon ------------------------------------ */
+/* A circle in the day's color with a numeric badge (FR-003/FR-012: colour +
+   number, never colour alone). The default leaflet-marker-icon images are
+   not referenced; we build DivIcons entirely in CSS. */
+.roam-pin-wrap { background: transparent; border: 0; }
+.roam-pin {
+  display: inline-flex;
+  width: 28px;
+  height: 28px;
+  border-radius: 9999px;
+  background: var(--pin, #2563eb);
+  color: #ffffff;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35), 0 0 0 2px rgba(255, 255, 255, 0.9);
+  font: 600 12px/1 ui-sans-serif, system-ui, sans-serif;
+}
+.roam-pin__badge { line-height: 1; }
+
 /* Skip-link: visible only when focused */
 .skip-link {
   position: absolute;

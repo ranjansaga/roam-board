@@ -75,20 +75,20 @@ Single Next.js App Router project. New code lives under `app/trips/[tripId]/map/
 
 ### Tests for User Story 1
 
-- [ ] T014 [P] [US1] Unit test `tests/unit/map-viewmodel.test.ts` for `useMapViewModel` — pure derivation: full trip in → correct `pins`/`unlocated`/`legend`/`bounds`/`totalLocated`; day filter projects pins correctly; `null` `coordinates` always lands in `unlocated` regardless of day filter; `bounds === null` when no pins; `showCapBanner` flips at > 50 located places.
-- [ ] T015 [P] [US1] Integration test `tests/integration/map-panel.test.tsx` (jsdom; `MapViewClient` mocked to its visible-pins list) covering: tablist toggle (Board↔Map) with correct `aria-selected`; day filter radio-group keyboard semantics; legend contents; empty state when no located pins exist.
-- [ ] T016 [P] [US1] Integration test `tests/integration/tile-disclosure.test.tsx` asserting SC-008: on first mount with no localStorage flag, the disclosure dialog renders and the mocked tile-fetch spy records **zero** calls until Dismiss is clicked.
-- [ ] T017 [P] [US1] Accessibility test `tests/a11y/map-panel.a11y.test.tsx` running jest-axe on the Map panel (with disclosure dismissed, mock `MapViewClient`); assert zero violations and verify the SR summary live-region exists with `aria-live="polite"`.
-- [ ] T018 [US1] Playwright e2e `tests/e2e/trip-map.spec.ts` for US1 happy path: open an existing trip → click Map → dismiss disclosure → assert pin count matches located places → click a pin → assert popup content → toggle back to Board → assert unchanged. Also assert `prefers-reduced-motion: reduce` makes the day-filter view change instant (no animation).
+- [X] T014 [P] [US1] `tests/unit/map-viewmodel.test.ts` — 8 cases (null trip, located/unlocated split, day-indexed color tokens, legend counts, single-day filter projection, filter-independent tray, bounds nullable, 50-place cap).
+- [X] T015 [P] [US1] `tests/integration/map-panel.test.tsx` — jsdom integration using a mocked MapViewClient. Covers US1 pin render + SR summary content, day-filter projection, and the empty-state branch.
+- [X] T016 [P] [US1] Folded into `tests/integration/map-panel.test.tsx` under a dedicated "disclosure gate" describe block. Asserts the real MapPanel does NOT mount the mocked MapViewClient while the dialog is up (SC-008) and skips the dialog when the localStorage flag is already set.
+- [X] T017 [P] [US1] `tests/a11y/map-panel.a11y.test.tsx` — axe runs clean both with pins visible (disclosure dismissed) and with the disclosure dialog on top.
+- [ ] T018 [US1] Playwright e2e `tests/e2e/trip-map.spec.ts` — deferred to end of US1/US2 so a single e2e file can cover both slices (per the plan's note on T026).
 
 ### Implementation for User Story 1
 
-- [ ] T019 [US1] Implement `app/trips/[tripId]/map/useMapViewModel.ts` consuming `useBoardStore().currentTrip` + a `DayFilter` arg, producing the `MapViewModel` shape from `data-model.md §3`. Pure projection; no side effects.
-- [ ] T020 [US1] Implement `app/trips/[tripId]/map/TileProviderDisclosure.tsx` — focus-trapped `role="dialog" aria-modal="true"` with Dismiss (primary) and "Learn more" (anchor to a future Settings section); on dismiss, calls `useTileProviderDisclosure().acknowledge()`.
-- [ ] T021 [US1] Implement `app/trips/[tripId]/map/DayFilter.tsx` as a `<fieldset>` with a visually-hidden legend and one radio per day plus "All days", following the keyboard contract in `contracts/map-view-controls.md §2` (roving tabindex, arrow-key selection + focus).
-- [ ] T022 [US1] Implement `app/trips/[tripId]/map/MapViewClient.tsx` — client component importing `leaflet` + `react-leaflet` + `leaflet/dist/leaflet.css` at module top; initializes map with `zoomAnimation/fadeAnimation/markerZoomAnimation = !reducedMotion`; renders tile layer from `lib/map/config.ts`; renders one `Marker` per pin with `{ keyboard: true, title }`; wires an `applyView(latLng, zoom)` wrapper per `contracts/map-view-controls.md §9` (the only place that selects animated vs. instant motion).
-- [ ] T023 [US1] Implement `app/trips/[tripId]/map/MapPanel.tsx` wrapping all of the above: dynamic-imports `MapViewClient` with `{ ssr: false, loading: <MapViewSkeleton /> }`; gates its mount on `useTileProviderDisclosure().acknowledged` so SC-008 holds; renders `TileProviderDisclosure`, `DayFilter`, legend, and a visually-hidden `<ul aria-live="polite">` carrying the SR summary from `contracts/map-view-controls.md §8`.
-- [ ] T024 [US1] Edit `app/trips/[tripId]/page.tsx` to add a tablist (Board / Map) following `contracts/map-view-controls.md §1`; render either the existing `Board` or the new `MapPanel`; state is session-only (no URL).
+- [X] T019 [US1] `app/trips/[tripId]/map/useMapViewModel.ts` — pure `deriveMapViewModel` + `useMapViewModel` hook; strips an internal `__place` ref before returning the public MapPin shape.
+- [X] T020 [US1] `app/trips/[tripId]/map/TileProviderDisclosure.tsx` — focus-trapped dialog with auto-focused Dismiss button; names the tile provider; two-paragraph privacy note.
+- [X] T021 [US1] `app/trips/[tripId]/map/DayFilter.tsx` — radio-group fieldset with sr-only legend, per-day color dot + numeric count, `has-[input:focus-visible]` outline so the hidden radio drives the chip's focus ring.
+- [X] T022 [US1] `app/trips/[tripId]/map/MapViewClient.tsx` — react-leaflet host; markers are `draggable: false`, `keyboard: true`, with `title` + day-colored divIcon numeric badge (addresses analyze U1 and C1 — attribution via Leaflet's built-in control with `TILE_ATTRIBUTION_HTML`). `AutoFit` + `DropModeHandler` wire reduced-motion and future US2 drop-mode through one surface each.
+- [X] T023 [US1] `app/trips/[tripId]/map/MapPanel.tsx` — gates MapViewClient on `useTileProviderDisclosure().acknowledged`; renders cap banner (FR-018), day filter, empty-state card (FR-014), and the sr-only `aria-live="polite"` SR summary with trip-level counts + per-day lines + each pin.
+- [X] T024 [US1] `app/trips/[tripId]/page.tsx` — added accessible `role="tablist"` with roving `tabindex`, ArrowLeft/ArrowRight to switch Board↔Map, session-only state.
 
 **Checkpoint**: US1 is independently demoable — Scenarios 1–7 in `quickstart.md` all pass.
 
