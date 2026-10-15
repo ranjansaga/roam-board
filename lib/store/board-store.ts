@@ -6,10 +6,12 @@ import {
   deletePlace as opDeletePlace,
   moveCard as opMoveCard,
   removeDay as opRemoveDay,
+  setCoordinates as opSetCoordinates,
   updatePlace as opUpdatePlace,
   type NewPlace,
   type PlaceEdit,
 } from "@/lib/domain/board-ops";
+import type { Place } from "@/lib/domain/schema";
 import { getTripRepository } from "@/lib/persistence/local-storage-repo";
 
 const repo = getTripRepository();
@@ -33,6 +35,7 @@ interface BoardStore {
   moveCard: (placeId: string, targetDayId: string, targetIndex: number) => void;
   addDay: () => void;
   removeDay: (dayId: string) => void;
+  setCoordinates: (placeId: string, coords: Place["coordinates"]) => void;
 }
 
 export const useBoardStore = create<BoardStore>((set, get) => {
@@ -74,5 +77,6 @@ export const useBoardStore = create<BoardStore>((set, get) => {
       apply((t) => opMoveCard(t, placeId, targetDayId, targetIndex)),
     addDay: () => apply((t) => opAddDay(t)),
     removeDay: (dayId) => apply((t) => opRemoveDay(t, dayId)),
+    setCoordinates: (placeId, coords) => apply((t) => opSetCoordinates(t, placeId, coords)),
   };
 });

@@ -1,5 +1,5 @@
 import type { Day, Place, Trip } from "./schema";
-import { MAX_ITEMS_PER_DAY, TRIP_MAX_DAYS } from "./schema";
+import { CoordinatesSchema, MAX_ITEMS_PER_DAY, TRIP_MAX_DAYS } from "./schema";
 import { newId } from "./id";
 
 export type PlaceEdit = Partial<Pick<Place, "name" | "description" | "category" | "dayPart">>;
@@ -116,4 +116,32 @@ export function removeDay(trip: Trip, dayId: string): Trip {
     trip,
     trip.days.filter((d) => d.id !== dayId),
   );
+}
+
+/**
+ * Set (or clear) a place's coordinates. Returns the trip unchanged if `placeId` is
+ * not found or `coords` fails `CoordinatesSchema` validation (lat [-90,90], lng
+ * [-180,180]). Pure. See Feature 002 FR-008/FR-009.
+ */
+export function setCoordinates(
+  trip: Trip,
+  placeId: string,
+  coords: Place["coordinates"],
+): Trip {
+  if (coords !== null) {
+    const parsed = CoordinatesSchema.safeParse(coords);
+    if (!parsed.success) return trip;
+    coords = parsed.data;
+  }
+  let found = false;
+  const days = trip.days.map((day) => ({
+    ...day,
+    places: day.places.map((p) => {
+      if (p.id !== placeId) return p;
+      found = true;
+      return { ...p, coordinates: coords };
+    }),
+  }));
+  if (!found) return trip;
+  return { ...trip, days, updatedAt: new Date().toISOString() };
 }

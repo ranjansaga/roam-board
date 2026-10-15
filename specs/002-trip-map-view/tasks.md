@@ -43,25 +43,25 @@ Single Next.js App Router project. New code lives under `app/trips/[tripId]/map/
 
 ### Domain extensions
 
-- [ ] T004 Extend `GeneratedItinerarySchema` in `lib/domain/schema.ts` with per-place optional `lat: z.number().optional()` and `lng: z.number().optional()`; keep `PlaceSchema` and `TripExportSchema` unchanged; keep `TRIP_EXPORT_SCHEMA_VERSION = 1`.
-- [ ] T005 [P] Create pure helper `lib/domain/coord-merge.ts` exporting `mergePreserveManualCoords(prev: Trip, next: Trip): Trip`. Match by trip-scoped normalized name (lowercase, trim, collapse internal whitespace). For each surviving match where `prev.place.coordinates !== null`, override `next.place.coordinates` with that value; otherwise keep `next`'s value. Pure, no side effects.
-- [ ] T006 [P] Add `setCoordinates(trip: Trip, placeId: string, coords: {lat: number; lng: number} | null): Trip` to `lib/domain/board-ops.ts`. Return `trip` unchanged if `placeId` not found or coords fail `CoordinatesSchema` validation (lat `[-90,90]`, lng `[-180,180]`); otherwise return a new trip with the one place updated. Pure.
+- [X] T004 Extend `GeneratedItinerarySchema` in `lib/domain/schema.ts` with per-place optional `lat`/`lng`; `PlaceSchema` and `TripExportSchema` unchanged.
+- [X] T005 [P] Pure helper `lib/domain/coord-merge.ts` with `mergePreserveManualCoords(prev, next): Trip` — trip-scoped normalized-name match, no mutation.
+- [X] T006 [P] `setCoordinates(trip, placeId, coords)` in `lib/domain/board-ops.ts` — validates via `CoordinatesSchema`, returns trip unchanged on invalid input or unknown id.
 
 ### Domain tests
 
-- [ ] T007 [P] Write unit test `tests/unit/coord-merge.test.ts` covering: identity match preserves manual coord; name case/whitespace variation still matches; place moved to a different day still preserves coord; place deleted in `next` is simply absent; `prev.coord === null` lets `next.coord` through; place added in `next` keeps whatever `next` provides.
-- [ ] T008 [P] Write unit test `tests/unit/set-coordinates.test.ts` covering: valid coord sets it; invalid lat/lng returns trip unchanged; unknown placeId returns trip unchanged; `null` coord clears the field; the returned trip is a new reference (no in-place mutation).
+- [X] T007 [P] `tests/unit/coord-merge.test.ts` — 8 cases (identity match, case/whitespace, moved day, unmatched add, null-prev passthrough, reference identity on no-op, first-occurrence-wins).
+- [X] T008 [P] `tests/unit/set-coordinates.test.ts` — 7 cases (valid set, clear via null, out-of-range lat/lng rejected, unknown id, no mutation, updatedAt bumps).
 
 ### AI boundary
 
-- [ ] T009 Edit `lib/ai/generate.ts` to: (a) include the one-line prompt addition from `contracts/ai-generation-coords.md §1`; (b) parse the extended `GeneratedItinerarySchema`; (c) fold `{lat, lng}` into `coordinates` iff both present and in range, else `coordinates: null`; (d) emit the two structured console logs from `contracts/ai-generation-coords.md §4` without logging coord values or place names; (e) accept an optional `prevTrip?: Trip` parameter and, when passed, apply `mergePreserveManualCoords` to the fresh trip before returning (not yet wired from any caller — the hook exists for future regenerate).
-- [ ] T010 [P] Write unit test `tests/unit/ai-coord-parsing.test.ts` covering the AI post-processing path only (mock the model): both lat/lng present and valid → `coordinates` populated; lat only present → `null`; lat out of `[-90,90]` → `null`; non-finite number → `null`; missing both → `null`; and that one invalid pair never fails the whole generation. Also assert the two observability log lines fire with the expected shape (no coord values).
+- [X] T009 AI boundary now folds optional lat/lng (`foldCoords` + `NormalizeResult`), emits the two `[ai.coord_enrichment]` log lines (no coord values, no names), and accepts optional `prevTrip` for the regenerate merge seam. Prompt extended with the one-line coord instruction. API route unchanged.
+- [X] T010 [P] `tests/unit/ai-coord-parsing.test.ts` — covers `foldCoords` (6 cases), `normalizeItinerary` enrichment counts (3 cases), `logCoordEnrichment` (2 cases: content shape + zero-total).
 
 ### Store, map config, hook
 
-- [ ] T011 Add `setCoordinates(placeId: string, coords: {lat: number; lng: number} | null): void` to `lib/store/board-store.ts`, wiring it through the existing `apply()` helper so it persists via `repo.save` on every call.
-- [ ] T012 [P] Create `lib/map/config.ts` exporting: the CARTO Positron (light) + Dark Matter (dark) tile URL templates, the required attribution HTML (OSM + CARTO), the 10-color day palette (CSS tokens or Tailwind classes paired with per-day numeric badges — never color-only), and a `boundsFor(pins: {lat,lng}[]): [[number,number],[number,number]] | null` helper.
-- [ ] T013 [P] Create `lib/hooks/useTileProviderDisclosure.ts` exporting `{ acknowledged, acknowledge, reset }` backed by `localStorage["roam-board.map.tile-disclosure.v1"]`; must tolerate blocked storage (returns `acknowledged: false` and `acknowledge` is a safe no-op persistence attempt).
+- [X] T011 `boardStore.setCoordinates(placeId, coords)` wired through the existing `apply()` helper so it persists via `repo.save`.
+- [X] T012 [P] `lib/map/config.ts` — CARTO Positron/Dark Matter tile URLs, OSM+CARTO attribution HTML, 10-color day palette, `boundsFor`, `colorForDay`, `MAP_SOFT_CAP`.
+- [X] T013 [P] `lib/hooks/use-tile-provider-disclosure.ts` — `useSyncExternalStore`-backed hook with `acknowledged / acknowledge / reset`; tolerates blocked storage and syncs across tabs via `storage` event.
 
 **Checkpoint**: `pnpm typecheck && pnpm lint && pnpm test` green. The three user-story phases can now proceed in parallel if staffed; sequential P1 → P2 → P3 is the default solo path.
 

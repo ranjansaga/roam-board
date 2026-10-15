@@ -99,6 +99,8 @@ export type Trip = z.infer<typeof TripSchema>;
 // --- AI generation output (the generateObject target) -----------------------
 // Deliberately permissive on category/dayPart: the boundary coerces them during
 // normalization (FR-028), so an off-list value becomes "other" rather than a hard failure.
+// lat/lng are OPTIONAL (Feature 002, FR-006). The boundary folds valid pairs into
+// Place.coordinates and leaves invalid or missing pairs as null.
 
 export const GeneratedItinerarySchema = z.object({
   days: z.array(
@@ -109,6 +111,8 @@ export const GeneratedItinerarySchema = z.object({
           description: z.string().max(600),
           category: z.string(),
           dayPart: z.string(),
+          lat: z.number().optional(),
+          lng: z.number().optional(),
         }),
       ),
     }),
